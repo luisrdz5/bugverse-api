@@ -5,7 +5,9 @@
   "description": "A Simple IoT Platform - API",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "NODE_ENV=production node server.js",
+    "start-dev": "DEBUG=plativerse:* nodemon server.js",
+    "lint": "standard"
   },
   "repository": {
     "type": "git",
@@ -16,5 +18,14 @@
   "bugs": {
     "url": "https://github.com/luisrdz5/bugverse-api/issues"
   },
-  "homepage": "https://github.com/luisrdz5/bugverse-api#readme"
+  "homepage": "https://github.com/luisrdz5/bugverse-api#readme",
+  "devDependencies": {
+    "nodemon": "^1.17.2",
+    "standard": "^11.0.1"
+  },
+  "dependencies": {
+    "chalk": "^2.3.2",
+    "debug": "^3.1.0",
+    "express": "^4.16.3"
+  }
 }
