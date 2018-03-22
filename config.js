@@ -12,5 +12,8 @@ module.exports = {
     dialect: 'postgres',
     logging: s => debug(s),
     operatorsAliases: Sequelize.Op
+  },
+  auth: {
+    secret: process.env.SECRET || 'bug'
   }
 }

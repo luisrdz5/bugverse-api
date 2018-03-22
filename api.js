@@ -5,6 +5,8 @@ const express = require('express')
 const db = require('bugverse-db')
 const config = require('./config')
 const asyncify = require('express-asyncify')
+const auth = require('express-jwt')
+
 
 const api = asyncify(express.Router())
 let services, Agent, Metric
@@ -23,11 +25,24 @@ api.use('*', async (req, res, next) => {
   next()
 })
 
-api.get('/agents', async (req, res, next) => {
+api.get('/agents', auth(config.auth) , async (req, res, next) => {
   debug(' A request has come to /agents')
+
+  const { user } = req
+
+  if(!user || !user.username){
+    return next(new Error('Not Autorized'))
+  }
+
+
   let agents = []
   try {
-    agents = await Agent.findConnected()
+      if(user.admin){
+        agents = await Agent.findConnected()
+      } else {
+        agents = await Agent.findByUserName(user.username)
+      }
+    
   } catch (e) {
     return next(e)
   }
