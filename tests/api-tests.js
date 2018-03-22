@@ -7,6 +7,13 @@ const proxyquire = require('proxyquire')
 const agentFixtures = require('./fixtures/agent')
 const metricFixtures = require('./fixtures/metric')
 
+const auth = require('../auth')
+const config = require('../config')
+const util = require('util')
+const sign = util.promisify(auth.sign)
+
+
+let token = null
 let sandbox = null
 let server = null
 let dbStub = null
@@ -29,6 +36,8 @@ test.beforeEach(async () => {
   AgentStub.findByUuid = sandbox.stub()
   AgentStub.findByUuid.returns(Promise.resolve(agentFixtures.single))
 
+  token = await sign({ admin: true, username: 'bug' }, config.auth.secret)
+
   const api = proxyquire('../api', {
     'bugverse-db': dbStub
   })
@@ -43,6 +52,7 @@ test.afterEach(() => {
 test.serial.cb('/api/agents', t => {
   request(server)
     .get('/api/agents')
+    .set('Authorization', ` Bearer ${token}`)
     .expect(200)
     .expect('Content-Type', /json/)
     .end((err, res) => {
